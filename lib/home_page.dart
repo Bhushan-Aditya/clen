@@ -1,9 +1,13 @@
+import 'package:clen/painting_page.dart';
+import 'package:clen/pest_control_page.dart';
 import 'package:clen/plumbing_page.dart' show PlumbingPage;
+import 'package:clen/waterproofing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'cleaning_page.dart'; // Import the cleaning_page.dart file
 import 'salon_spa_page.dart'; // Import the salon_spa_page.dart file
 import 'electrician_page.dart';
+import 'carpenter_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -582,6 +586,29 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const PlumbingPage()),
+                          );
+                        }
+                        else if (service['name'] == 'Carpenter') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const CarpentryPage()),
+                          );
+                        } else if (service['name'] == 'Painting') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const PaintingPage()),
+                          );
+                        }
+                        else if (service['name'] == 'Waterproofing') { // Add navigation for Waterproofing
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const WaterproofingPage()),
+                          );
+                        }
+                        else if (service['name'] == 'Pest Control') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const PestControlPage()),
                           );
                         }
                         else {
