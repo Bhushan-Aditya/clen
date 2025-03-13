@@ -1,36 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/cart_provider.dart'; // Assuming you will have a cart_provider.dart file in providers folder
 import 'login_page.dart';
 import 'sign_up_page.dart';
 import 'home_page.dart';
 
 void main() {
-  runApp(const UrbanServicesApp());
+  runApp(const MyApp());
 }
 
-class UrbanServicesApp extends StatelessWidget {
-  const UrbanServicesApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Urban Services',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6366F1),
-          primary: const Color(0xFF6366F1),
-          secondary: const Color(0xFF0EA5E9),
-          background: Colors.white,
+    return ChangeNotifierProvider(
+      create: (ctx) => CartProvider(), // Initialize your CartProvider or any other Provider here
+      child: MaterialApp(
+        title: 'ClenZo', // Or 'Urban Services' based on your app name
+        debugShowCheckedModeBanner: false, // Keep debug banner setting
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF6366F1),
+            primary: const Color(0xFF6366F1),
+            secondary: const Color(0xFF0EA5E9),
+            background: Colors.white,
+          ),
+          useMaterial3: true,
+          visualDensity: VisualDensity.adaptivePlatformDensity, // Keep visual density if needed
         ),
-        useMaterial3: true,
+        initialRoute: '/', // Set initial route to LandingPage
+        routes: {
+          '/': (context) => const LandingPage(), // Keep LandingPage as initial route
+          '/signup': (context) => const SignUpPage(),
+          '/login': (context) => const LoginPage(),
+          '/home': (context) => const HomePage(),
+        },
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LandingPage(),
-        '/signup': (context) => const SignUpPage(),
-        '/login': (context) => const LoginPage(),
-        '/home': (context) => const HomePage(),
-      },
     );
   }
 }

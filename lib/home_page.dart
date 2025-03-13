@@ -8,6 +8,10 @@ import 'cleaning_page.dart'; // Import the cleaning_page.dart file
 import 'salon_spa_page.dart'; // Import the salon_spa_page.dart file
 import 'electrician_page.dart';
 import 'carpenter_page.dart';
+import 'package:provider/provider.dart'; // Import provider
+import 'cart_page.dart'; // Assuming you have a cart_page.dart
+import 'providers/cart_provider.dart'; // Import CartProvider
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -104,7 +108,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       'color': const Color(0xFF60A5FA),
     },
     {
-      'name': 'Bathroom Cleaning', // Increased text length
+      'name': 'Bathroom Cleaning',
       'price': '₹299',
       'rating': 4.7,
       'image': 'assets/bathroom.jpg',
@@ -131,7 +135,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   final List<Map<String, dynamic>> _topRated = [
     {
-      'name': 'Luxury Home Cleaning and Deep Sanitization Service', // Increased text length
+      'name': 'Luxury Home Cleaning and Deep Sanitization Service',
       'price': '₹1999',
       'rating': 4.9,
       'reviews': 345,
@@ -161,6 +165,100 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       'color': const Color(0xFFF87171),
     },
   ];
+
+  // Add to your _HomePageState class
+  String _selectedLocation = 'Select Location';
+
+  // Sample list of Chennai localities
+  final List<String> _chennaiLocalities = [
+    'Anna Nagar',
+    'T. Nagar',
+    'Adyar',
+    'Velachery',
+    'Tambaram',
+    'Chromepet',
+    'Porur',
+    'Mylapore',
+    'Nungambakkam',
+    'Kodambakkam',
+    'OMR',
+    'ECR',
+    'Guduvanchery',
+    'Sholinganallur',
+    'Pallikaranai',
+    'Thoraipakkam',
+    'Perungudi',
+    'Perambur',
+    'Vadapalani',
+    'Guindy',
+  ];
+
+  // Function to show location selection modal
+  void _showLocationSelector(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Search localities...',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _chennaiLocalities.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: const Icon(Icons.location_on_outlined),
+                      title: Text(_chennaiLocalities[index]),
+                      onTap: () {
+                        setState(() {
+                          _selectedLocation = _chennaiLocalities[index];
+                        });
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 
   @override
   void initState() {
@@ -218,7 +316,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            // App Bar
             SliverAppBar(
               floating: true,
               pinned: false,
@@ -241,7 +338,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'UrbanPro',
+                    'ClenZo',
                     style: TextStyle(
                       color: Theme.of(context).primaryColor,
                       fontWeight: FontWeight.bold,
@@ -286,6 +383,47 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     // Show notifications
                   },
                 ),
+                Consumer<CartProvider>(
+                  builder: (_, cart, __) => Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.shopping_cart_outlined),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const CartPage()),
+                          );
+                        },
+                      ),
+                      if (cart.itemCount > 0)
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Container(
+                            padding: const EdgeInsets.all(1),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              cart.itemCount.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
                 GestureDetector(
                   onTap: () => _showProfileOptions(context),
                   child: Container(
@@ -310,37 +448,38 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 ),
               ],
             ),
-
-            // Location & Search
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 8), // Adjusted padding here
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on,
-                          size: 18,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded( // Added Expanded for text to wrap if needed
-                          child: const Text(
-                            'Koramangala, Bengaluru',
-                            overflow: TextOverflow.ellipsis, // Added overflow for very long location names
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
+                    GestureDetector(
+                      onTap: () => _showLocationSelector(context),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            size: 18,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              _selectedLocation,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
                             ),
                           ),
-                        ),
-                        const Icon(
-                          Icons.keyboard_arrow_down,
-                          size: 18,
-                        ),
-                      ],
+                          const Icon(
+                            Icons.keyboard_arrow_down,
+                            size: 18,
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 16),
                     Container(
@@ -379,11 +518,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 ),
               ),
             ),
-
-            // Banner Carousel
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 180,
+                height: 220, // Increased height from 200
                 child: PageView.builder(
                   controller: _bannerController,
                   onPageChanged: (index) {
@@ -395,9 +532,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   itemBuilder: (context, index) {
                     final promotion = _promotions[index];
                     return Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Adjusted horizontal padding here
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
+                        clipBehavior: Clip.hardEdge,
                         child: Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -421,8 +559,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(16), // Reduced padding from 20
                                 child: Column(
+                                  mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
@@ -446,8 +585,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                     const SizedBox(height: 12),
                                     Text(
                                       promotion['title'] as String,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
-                                        fontSize: 22, // Slightly reduced font size
+                                        fontSize: 20, // Reduced font size from 22
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
@@ -455,8 +596,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                     const SizedBox(height: 6),
                                     Text(
                                       promotion['subtitle'] as String,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        fontSize: 14, // Slightly reduced font size
+                                        fontSize: 13, // Reduced font size from 14
                                         color: Colors.white.withOpacity(0.9),
                                       ),
                                     ),
@@ -494,8 +637,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 ),
               ),
             ),
-
-            // Banner Indicator
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
@@ -518,11 +659,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 ),
               ),
             ),
-
-            // Section Title - Services
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                padding: const EdgeInsets.fromLTRB(12, 16, 12, 8), // Adjusted padding here
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -547,11 +686,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 ),
               ),
             ),
-
-            // Services Grid
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 12), // Adjusted padding here
                 child: GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -574,21 +711,19 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         } else if (service['name'] == 'Salon & Spa') {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const SalonSpaPage()), // Corrected to SalonSpaPage()
+                            MaterialPageRoute(builder: (context) => const SalonSpaPage()),
                           );
                         } else if (service['name'] == 'Electrician') {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const ElectricianPage()),
                           );
-
                         } else if (service['name'] == 'Plumbing') {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const PlumbingPage()),
                           );
-                        }
-                        else if (service['name'] == 'Carpenter') {
+                        } else if (service['name'] == 'Carpenter') {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const CarpentryPage()),
@@ -598,21 +733,17 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                             context,
                             MaterialPageRoute(builder: (context) => const PaintingPage()),
                           );
-                        }
-                        else if (service['name'] == 'Waterproofing') { // Add navigation for Waterproofing
+                        } else if (service['name'] == 'Waterproofing') {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const WaterproofingPage()),
                           );
-                        }
-                        else if (service['name'] == 'Pest Control') {
+                        } else if (service['name'] == 'Pest Control') {
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const PestControlPage()),
                           );
-                        }
-                        else {
-                          // Handle other services if needed
+                        } else {
                           print('${service['name']} service tapped');
                         }
                       },
@@ -643,8 +774,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                               fontWeight: FontWeight.w500,
                             ),
                             textAlign: TextAlign.center,
-                            maxLines: 2, // Ensure text wraps and doesn't overflow
-                            overflow: TextOverflow.ellipsis, // Clip overflowing text
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -653,11 +784,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 ),
               ),
             ),
-
-            // Tabbed Section
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+                padding: const EdgeInsets.fromLTRB(12, 24, 12, 0), // Adjusted padding here
                 child: Column(
                   children: [
                     Container(
@@ -686,19 +815,18 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     ),
                     const SizedBox(height: 16),
                     SizedBox(
-                      height: 270,
+                      height: 300,
                       child: TabBarView(
                         controller: _tabController,
                         children: [
-                          // Quick Services Tab
                           ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: _quickServices.length,
                             itemBuilder: (context, index) {
                               final service = _quickServices[index];
                               return Container(
-                                width: 200,
-                                margin: const EdgeInsets.only(right: 16),
+                                width: 190, // Reduced width here
+                                margin: const EdgeInsets.only(right: 10), // Reduced right margin here
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(16),
@@ -737,8 +865,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                         children: [
                                           Text(
                                             service['name'] as String,
-                                            maxLines: 1, // Limit to one line
-                                            overflow: TextOverflow.ellipsis, // Clip if overflowing
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -802,16 +930,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                               );
                             },
                           ),
-
-                          // Top Rated Tab
                           ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: _topRated.length,
                             itemBuilder: (context, index) {
                               final service = _topRated[index];
                               return Container(
-                                width: 280,
-                                margin: const EdgeInsets.only(right: 16),
+                                width: 270, // Reduced width here
+                                margin: const EdgeInsets.only(right: 10), // Reduced right margin here
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(16),
@@ -893,8 +1019,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                         children: [
                                           Text(
                                             service['name'] as String,
-                                            maxLines: 1, // Limit to one line
-                                            overflow: TextOverflow.ellipsis, // Clip if overflowing
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -951,8 +1077,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                               );
                             },
                           ),
-
-                          // New Offers Tab
                           Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -980,8 +1104,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 ),
               ),
             ),
-
-            // Flexible space at the bottom
             const SliverToBoxAdapter(
               child: SizedBox(height: 80),
             ),
