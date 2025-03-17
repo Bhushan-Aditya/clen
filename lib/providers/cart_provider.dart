@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/cart_item.dart'; // Import CartItem model
+import '../models/address.dart'; // Ensure you import Address model from models/address.dart
+
 
 class CartProvider extends ChangeNotifier {
   final List<CartItem> _items = [];
@@ -43,9 +45,10 @@ class CartProvider extends ChangeNotifier {
   void removeItem(String id) {
     _items.removeWhere((item) => item.id == id);
     notifyListeners();
+    print('Item removed: $id'); // Debug print
   }
 
-  // ADD THIS METHOD TO YOUR CART PROVIDER:
+
   void decrementItem(String itemId) {
     final existingIndex = _items.indexWhere((item) => item.id == itemId);
     if (existingIndex < 0) {
@@ -55,6 +58,7 @@ class CartProvider extends ChangeNotifier {
       _items[existingIndex].quantity--; // Decrease quantity if more than 1
     } else {
       _items.removeAt(existingIndex); // Remove item if quantity becomes 1
+      print('Item removed by decrement: $itemId'); // Debug print
     }
     notifyListeners();
   }
@@ -71,4 +75,30 @@ class CartProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // User information
+  String _userName = '';
+  String _mobileNumber = '';
+  Address? _address;
+
+  String get userName => _userName;
+  String get mobileNumber => _mobileNumber;
+  Address? get address => _address;
+
+  void setUserInfo(String name, String mobile) {
+    _userName = name;
+    _mobileNumber = mobile;
+    notifyListeners();
+  }
+
+  void setAddress(Address? address) { // Modified to accept nullable Address
+    _address = address;
+    notifyListeners();
+  }
+
+  bool get isCheckoutReady =>
+      _address != null &&
+          _userName.isNotEmpty &&
+          _mobileNumber.isNotEmpty &&
+          _items.isNotEmpty;
 }

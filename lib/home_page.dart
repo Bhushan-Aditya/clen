@@ -12,7 +12,6 @@ import 'package:provider/provider.dart'; // Import provider
 import 'cart_page.dart'; // Assuming you have a cart_page.dart
 import 'providers/cart_provider.dart'; // Import CartProvider
 
-
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -25,6 +24,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   int _selectedIndex = 0;
   int _activeBannerIndex = 0;
   final PageController _bannerController = PageController();
+  String _searchQuery = ''; // Added search query state
 
   final List<Map<String, dynamic>> _promotions = [
     {
@@ -100,69 +100,83 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   final List<Map<String, dynamic>> _quickServices = [
     {
+      'id': 'ac_repair_quick', // Added ID
       'name': 'AC Repair',
-      'price': '₹399',
+      'price': 399.0, // Price as double
       'rating': 4.8,
       'image': 'assets/ac_repair.jpg',
       'icon': Icons.ac_unit_rounded,
       'color': const Color(0xFF60A5FA),
+      'serviceType': 'Quick Service', // Added serviceType
     },
     {
+      'id': 'bathroom_cleaning_quick', // Added ID
       'name': 'Bathroom Cleaning',
-      'price': '₹299',
+      'price': 299.0, // Price as double
       'rating': 4.7,
       'image': 'assets/bathroom.jpg',
       'icon': Icons.bathroom_rounded,
       'color': const Color(0xFF34D399),
+      'serviceType': 'Quick Service', // Added serviceType
     },
     {
+      'id': 'furniture_assembly_quick', // Added ID
       'name': 'Furniture Assembly',
-      'price': '₹599',
+      'price': 599.0, // Price as double
       'rating': 4.9,
       'image': 'assets/furniture.jpg',
       'icon': Icons.chair_rounded,
       'color': const Color(0xFFA78BFA),
+      'serviceType': 'Quick Service', // Added serviceType
     },
     {
+      'id': 'electrical_wiring_quick', // Added ID
       'name': 'Electrical Wiring',
-      'price': '₹499',
+      'price': 499.0, // Price as double
       'rating': 4.8,
       'image': 'assets/wiring.jpg',
       'icon': Icons.cable_rounded,
       'color': const Color(0xFFFBBF24),
+      'serviceType': 'Quick Service', // Added serviceType
     },
   ];
 
   final List<Map<String, dynamic>> _topRated = [
     {
+      'id': 'luxury_home_cleaning_top_rated',  // Added ID
       'name': 'Luxury Home Cleaning and Deep Sanitization Service',
-      'price': '₹1999',
+      'price': 1999.0,  // Price as double
       'rating': 4.9,
       'reviews': 345,
       'image': 'assets/luxury_cleaning.jpg',
       'time': '4 hrs',
       'icon': Icons.cleaning_services_rounded,
       'color': const Color(0xFF00B4D8),
+      'serviceType': 'Top Rated', // Added serviceType
     },
     {
+      'id': 'bathroom_renovation_top_rated', // Added ID
       'name': 'Bathroom Renovation',
-      'price': '₹15999',
+      'price': 15999.0, // Price as double
       'rating': 4.8,
       'reviews': 213,
       'image': 'assets/bathroom_reno.jpg',
       'time': '3 days',
       'icon': Icons.bathroom_rounded,
       'color': const Color(0xFF0EA5E9),
+      'serviceType': 'Top Rated', // Added serviceType
     },
     {
+      'id': 'full_home_painting_top_rated', // Added ID
       'name': 'Full Home Painting',
-      'price': '₹12999',
+      'price': 12999.0, // Price as double
       'rating': 4.9,
       'reviews': 189,
       'image': 'assets/home_painting.jpg',
       'time': '2 days',
       'icon': Icons.format_paint_rounded,
       'color': const Color(0xFFF87171),
+      'serviceType': 'Top Rated', // Added serviceType
     },
   ];
 
@@ -219,7 +233,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: TextField(
+                child: TextFormField(
                   decoration: InputDecoration(
                     hintText: 'Search localities...',
                     prefixIcon: const Icon(Icons.search),
@@ -310,6 +324,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
+
+    List<Map<String, dynamic>> _filteredQuickServices = _searchQuery.isEmpty
+        ? _quickServices
+        : _quickServices.where((service) => (service['name'] as String).toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+
+    List<Map<String, dynamic>> _filteredTopRatedServices = _searchQuery.isEmpty
+        ? _topRated
+        : _topRated.where((service) => (service['name'] as String).toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+
 
     return Scaffold(
       body: SafeArea(
@@ -512,6 +535,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(vertical: 12),
                         ),
+                        onChanged: (value) {  // Added onChanged callback
+                          setState(() {
+                            _searchQuery = value;
+                          });
+                        },
                       ),
                     ),
                   ],
@@ -821,9 +849,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         children: [
                           ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: _quickServices.length,
+                            itemCount: _filteredQuickServices.length, // Use filtered list here
                             itemBuilder: (context, index) {
-                              final service = _quickServices[index];
+                              final service = _filteredQuickServices[index]; // Use filtered list here
                               return Container(
                                 width: 190, // Reduced width here
                                 margin: const EdgeInsets.only(right: 10), // Reduced right margin here
@@ -876,7 +904,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                           Row(
                                             children: [
                                               Text(
-                                                service['price'] as String,
+                                                '₹${service['price'].toStringAsFixed(0)}', // Display price from double
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   color: Theme.of(context).primaryColor,
@@ -911,8 +939,36 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                             ],
                                           ),
                                           const SizedBox(height: 12),
-                                          ElevatedButton(
-                                            onPressed: () {},
+                                          ElevatedButton.icon( // Changed to ElevatedButton.icon
+                                            onPressed: () {
+                                              final cart = Provider.of<CartProvider>(context, listen: false);
+                                              cart.addItem(
+                                                service['id'] as String,
+                                                service['name'] as String,
+                                                service['price'] as double,
+                                                service['serviceType'] as String,
+                                                service['image'] as String, // You may need to adjust image path
+                                                service['icon'] as IconData,
+                                                service['color'] as Color,
+                                              );
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Text('${service['name']} added to cart'),
+                                                  duration: const Duration(seconds: 2),
+                                                  action: SnackBarAction(
+                                                    label: 'VIEW CART',
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) => const CartPage(),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              );
+                                            },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Theme.of(context).primaryColor,
                                               minimumSize: const Size(double.infinity, 36),
@@ -920,7 +976,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                                 borderRadius: BorderRadius.circular(8),
                                               ),
                                             ),
-                                            child: const Text('Book Now'),
+                                            icon: const Icon(Icons.add_shopping_cart, color: Colors.white,), // Added icon
+                                            label: const Text('Add to Cart', style: TextStyle(color: Colors.white)), // Changed text
                                           ),
                                         ],
                                       ),
@@ -932,9 +989,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           ),
                           ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: _topRated.length,
+                            itemCount: _filteredTopRatedServices.length, // Use filtered list here
                             itemBuilder: (context, index) {
-                              final service = _topRated[index];
+                              final service = _filteredTopRatedServices[index]; // Use filtered list here
                               return Container(
                                 width: 270, // Reduced width here
                                 margin: const EdgeInsets.only(right: 10), // Reduced right margin here
@@ -1031,7 +1088,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                service['price'] as String,
+                                                '₹${service['price'].toStringAsFixed(0)}',
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   color: Theme.of(context).primaryColor,
@@ -1058,8 +1115,36 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                             ],
                                           ),
                                           const SizedBox(height: 12),
-                                          ElevatedButton(
-                                            onPressed: () {},
+                                          ElevatedButton.icon( // Changed to ElevatedButton.icon
+                                            onPressed: () {
+                                              final cart = Provider.of<CartProvider>(context, listen: false);
+                                              cart.addItem(
+                                                service['id'] as String,
+                                                service['name'] as String,
+                                                service['price'] as double,
+                                                service['serviceType'] as String,
+                                                service['image'] as String, // You may need to adjust image path
+                                                service['icon'] as IconData,
+                                                service['color'] as Color,
+                                              );
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Text('${service['name']} added to cart'),
+                                                  duration: const Duration(seconds: 2),
+                                                  action: SnackBarAction(
+                                                    label: 'VIEW CART',
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) => const CartPage(),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              );
+                                            },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Theme.of(context).primaryColor,
                                               minimumSize: const Size(double.infinity, 36),
@@ -1067,7 +1152,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                                 borderRadius: BorderRadius.circular(8),
                                               ),
                                             ),
-                                            child: const Text('Book Now'),
+                                            icon: const Icon(Icons.add_shopping_cart, color: Colors.white,),  // Added icon
+                                            label: const Text('Add to Cart', style: TextStyle(color: Colors.white)), // Changed text
                                           ),
                                         ],
                                       ),
