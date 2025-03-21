@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'login_page.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../services/auth_service.dart'; // Import the AuthService
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -28,6 +29,43 @@ class _SignUpPageState extends State<SignUpPage> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _signUp() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        final response = await AuthService.signUp(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+          fullName: _nameController.text.trim(),
+          phone: _phoneController.text.trim(),
+        );
+
+        if (response.user != null) {
+          // Store user information securely if needed
+          const storage = FlutterSecureStorage();
+          await storage.write(key: 'user_id', value: response.user!.id);
+
+          // Navigate to home page or any appropriate page
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          // Show error message if signup fails
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Sign Up failed. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -195,21 +233,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                 // Sign Up Button
                 ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // For now, just navigate to login page
-                      // In a real app, you would handle signup with authentication
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Account created successfully! Please log in.'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-
-                      // Navigate to login page after successful signup
-                      Navigator.pushReplacementNamed(context, '/login');
-                    }
-                  },
+                  onPressed: _signUp,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     backgroundColor: Theme.of(context).colorScheme.primary,

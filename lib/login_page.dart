@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'sign_up_page.dart';
-import 'home_page.dart';
+import '../services/auth_service.dart'; // Import AuthService
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -23,6 +22,36 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  Future<void> _login() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        final response = await AuthService.signIn(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+
+        if (response.user != null) {
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Login failed. Please check your credentials.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        print(e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,25 +68,10 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Header
-                const Text(
-                  'Welcome Back',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                const Text('Welcome Back', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
-                const Text(
-                  'Login to access your account and services',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
+                const Text('Login to access your account and services', style: TextStyle(fontSize: 16, color: Colors.grey)),
                 const SizedBox(height: 32),
-
-                // Email Field
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
@@ -77,8 +91,6 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 const SizedBox(height: 16),
-
-                // Password Field
                 TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
@@ -107,8 +119,6 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 const SizedBox(height: 8),
-
-                // Remember Me & Forgot Password
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -134,23 +144,8 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
                 const SizedBox(height: 24),
-
-                // Login Button
                 ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Simulate login process with feedback
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Login successful'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-
-                      // Navigate to home page after successful login
-                      Navigator.pushReplacementNamed(context, '/home');
-                    }
-                  },
+                  onPressed: _login,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     backgroundColor: Theme.of(context).colorScheme.primary,
@@ -168,20 +163,12 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // Sign Up Link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      'Don\'t have an account?',
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
+                    const Text('Don\'t have an account?', style: TextStyle(color: Colors.grey)),
                     TextButton(
                       onPressed: () {
-                        // Navigate to signup page
                         Navigator.pushReplacementNamed(context, '/signup');
                       },
                       child: const Text('Sign Up'),
