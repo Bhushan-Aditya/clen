@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // For clipboard functionality
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'dart:math' as math;
 
 import 'providers/cart_provider.dart';
-import 'models/cart_item.dart';
 import 'home_page.dart';
 
 class BookingConfirmationPage extends StatefulWidget {
+  final String bookingId; // Add bookingId as a required parameter
   final Map<String, String> address;
   final String paymentMethod;
   final double cartTotal;
@@ -17,6 +16,7 @@ class BookingConfirmationPage extends StatefulWidget {
 
   const BookingConfirmationPage({
     Key? key,
+    required this.bookingId, // Required parameter
     required this.address,
     required this.paymentMethod,
     required this.cartTotal,
@@ -31,9 +31,6 @@ class BookingConfirmationPage extends StatefulWidget {
 class _BookingConfirmationPageState extends State<BookingConfirmationPage> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
-
-  // Generate a random booking ID
-  final String bookingId = 'BK${math.Random().nextInt(900000) + 100000}';
 
   @override
   void initState() {
@@ -80,7 +77,7 @@ class _BookingConfirmationPageState extends State<BookingConfirmationPage> with 
     return """
 📝 BOOKING CONFIRMATION 📝
 
-Booking ID: $bookingId
+Booking ID: ${widget.bookingId}
 Date: ${DateFormat('EEEE, MMMM d, yyyy').format(widget.serviceDate)}
 Time: ${widget.serviceTime}
 
@@ -194,7 +191,7 @@ Thank you for choosing our service!
                             Row(
                               children: [
                                 Text(
-                                  bookingId,
+                                  widget.bookingId, // Use the passed bookingId
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -206,7 +203,7 @@ Thank you for choosing our service!
                                 GestureDetector(
                                   onTap: () {
                                     // Copy booking ID to clipboard
-                                    copyToClipboard(bookingId);
+                                    copyToClipboard(widget.bookingId);
                                   },
                                   child: Icon(
                                     Icons.copy,
@@ -521,7 +518,7 @@ Thank you for choosing our service!
 
                   const SizedBox(height: 32),
 
-                  // Copy booking details button (replaced Share button)
+                  // Copy booking details button
                   OutlinedButton.icon(
                     onPressed: () {
                       copyToClipboard(getBookingDetails());
