@@ -142,7 +142,7 @@ class _CartPageState extends State<CartPage> {
       return;
     }
 
-    // Calculate the cart total before making the API call
+    // Calculate the cart total
     final double cartTotal = cartItems.fold(
       0,
           (sum, item) => sum + (item.price * item.quantity),
@@ -158,7 +158,6 @@ class _CartPageState extends State<CartPage> {
     );
 
     try {
-      // Call createBooking with only the parameters it accepts
       final result = await SupabaseService.createBooking(
         savedAddress: savedAddress,
         paymentMethod: selectedPaymentMethod!,
@@ -168,12 +167,15 @@ class _CartPageState extends State<CartPage> {
 
       // Close loading dialog
       Navigator.pop(context);
+
+      // Create a copy of cart items before clearing the cart
+      final confirmedItems = List<CartItem>.from(cartItems);
+
       // Clear the cart after successful booking
       cartProvider.clearCart();
-      // Generate a booking ID if one isn't returned from your service
+
       final bookingId = result['bookingId'] ?? 'BK-${DateTime.now().millisecondsSinceEpoch.toString().substring(0, 8)}';
 
-      // Use the manually calculated cart total instead of relying on the result
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -181,9 +183,10 @@ class _CartPageState extends State<CartPage> {
             bookingId: bookingId,
             address: savedAddress,
             paymentMethod: selectedPaymentMethod!,
-            cartTotal: cartTotal, // Use the pre-calculated cart total
+            cartTotal: cartTotal,
             serviceDate: selectedDate!,
             serviceTime: selectedTimeSlot!,
+            cartItems: confirmedItems, // Pass the cart items to the confirmation page
           ),
         ),
       );
@@ -197,8 +200,6 @@ class _CartPageState extends State<CartPage> {
       );
     }
   }
-
-
 
   void _checkScheduleSelection() {
     setState(() {

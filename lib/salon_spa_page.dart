@@ -57,7 +57,7 @@ class _SalonSpaPageState extends State<SalonSpaPage> with SingleTickerProviderSt
         description: 'Custom colors and highlights',
         price: 49.99,
         icon: Icons.brush,
-        imageUrl: 'assets/images/hair_coloring.jpg',
+        imageUrl: 'assets/images/hair_colouring.jpg',
         color: Colors.orange.shade400, // Added color
         serviceType: 'Salon & Spa', // Added serviceType
       ),
@@ -89,7 +89,7 @@ class _SalonSpaPageState extends State<SalonSpaPage> with SingleTickerProviderSt
         description: 'Eyebrow shaping and threading',
         price: 14.99,
         icon: Icons.architecture_outlined,
-        imageUrl: 'assets/images/eyebrows.jpg',
+        imageUrl: 'assets/images/eyebrow.jpg',
         color: Colors.teal.shade300, // Added color
         serviceType: 'Salon & Spa', // Added serviceType
       ),
@@ -125,16 +125,6 @@ class _SalonSpaPageState extends State<SalonSpaPage> with SingleTickerProviderSt
         icon: Icons.self_improvement,
         imageUrl: 'assets/images/massage.jpg',
         color: Colors.blue.shade300, // Added color
-        serviceType: 'Salon & Spa', // Added serviceType
-      ),
-      SalonService(
-        id: 'body_scrub_salon', // Added ID
-        name: 'Body Scrub',
-        description: 'Exfoliation and revitalization for your body',
-        price: 49.99,
-        icon: Icons.cleaning_services_outlined,
-        imageUrl: 'assets/images/body_scrub.jpg',
-        color: Colors.deepOrange.shade300, // Added color
         serviceType: 'Salon & Spa', // Added serviceType
       ),
     ],

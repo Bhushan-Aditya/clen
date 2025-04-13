@@ -57,12 +57,32 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/images/bathroom_cleaning.jpg
+    - assets/images/bedroom_cleaning.jpg
+    - assets/images/carpet_cleaning.jpg
+    - assets/images/chimney_cleaning.jpg
+    - assets/images/deep_cleaning.jpg
+    - assets/images/eyebrow.jpg
+    - assets/images/facial.jpg
+    - assets/images/hair_colouring.jpg
+    - assets/images/hair_treatment.jpg
+    - assets/images/haircut.jpg
+    - assets/images/kitchen_cleaning.jpg
+    - assets/images/manicure.jpg
+    - assets/images/massage.jpg
+    - assets/images/oven_cleaning.jpg
+    - assets/images/pedicure.jpg
+    - assets/images/post_cleaning.jpg
+    - assets/images/refridgerator_cleaning.jpg
+    - assets/images/regular_cleaning.jpg
+    - assets/images/sofa_cleaning.jpg
+    - assets/images/window_cleaning.jpg
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

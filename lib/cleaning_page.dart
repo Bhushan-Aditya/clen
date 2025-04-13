@@ -29,18 +29,6 @@ class _CleaningPageState extends State<CleaningPage> {
         serviceType: 'Cleaning', // Added serviceType
       ),
       CleaningService(
-        name: 'Deep Cleaning',
-        description: 'Thorough cleaning of your entire home',
-        price: 89.99,
-        icon: Icons.home_work_outlined,
-        imageUrl: 'assets/images/deep_cleaning.jpg',
-        id: 'deep_cleaning',
-        color: Colors.teal,
-        serviceType: 'Cleaning', // Added serviceType
-      ),
-    ],
-    'Specialized Cleaning': [
-      CleaningService(
         name: 'Kitchen Cleaning',
         description: 'Deep clean for your kitchen, including appliances',
         price: 59.99,
@@ -119,7 +107,7 @@ class _CleaningPageState extends State<CleaningPage> {
         description: 'Inside-out cleaning of refrigerator',
         price: 29.99,
         icon: Icons.kitchen_outlined,
-        imageUrl: 'assets/images/fridge_cleaning.jpg',
+        imageUrl: 'assets/images/refridgerator_cleaning.jpg',
         id: 'refrigerator_cleaning',
         color: Colors.indigo,
         serviceType: 'Cleaning', // Added serviceType
@@ -139,7 +127,7 @@ class _CleaningPageState extends State<CleaningPage> {
         description: 'Cleaning after renovation or construction',
         price: 149.99,
         icon: Icons.construction_outlined,
-        imageUrl: 'assets/images/post_construction.jpg',
+        imageUrl: 'assets/images/post_cleaning.jpg',
         id: 'post_construction_cleaning',
         color: Colors.grey,
         serviceType: 'Cleaning', // Added serviceType
@@ -222,21 +210,65 @@ class _CleaningPageState extends State<CleaningPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: service.color.withOpacity(0.2),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12),
-                    ),
+                // Image section with fallback icon
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
                   ),
-                  child: Center(
-                    child: Icon(
-                      service.icon,
-                      size: 70,
-                      color: service.color,
-                    ),
+                  child: Stack(
+                    children: [
+                      // Fallback colored container in case image fails
+                      Container(
+                        height: 180,
+                        width: double.infinity,
+                        color: service.color.withOpacity(0.2),
+                        child: Center(
+                          child: Icon(
+                            service.icon,
+                            size: 70,
+                            color: service.color,
+                          ),
+                        ),
+                      ),
+                      // Actual image with error handling
+                      Image.asset(
+                        service.imageUrl,
+                        height: 180,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return SizedBox(); // Return empty SizedBox to show the fallback
+                        },
+                      ),
+                      // Service name overlay
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [
+                                Colors.black.withOpacity(0.7),
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
+                          child: Text(
+                            service.name,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Padding(
@@ -244,14 +276,6 @@ class _CleaningPageState extends State<CleaningPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        service.name,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
                       Text(
                         service.description,
                         style: TextStyle(
