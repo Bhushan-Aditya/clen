@@ -11,6 +11,7 @@ import 'carpenter_page.dart';
 import 'package:provider/provider.dart'; // Import provider
 import 'cart_page.dart'; // Assuming you have a cart_page.dart
 import 'providers/cart_provider.dart'; // Import CartProvider
+import '../services/auth_service.dart'; // Import AuthService  <-- ADDED IMPORT
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -1199,6 +1200,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     );
   }
 
+  // Show the Profile Options Modal Bottom Sheet  <-- ADDED PROFILE OPTIONS MODAL FUNCTION
   void _showProfileOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -1220,64 +1222,58 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 ),
               ),
               const SizedBox(height: 20),
+              // My Profile Option
               ListTile(
                 leading: CircleAvatar(
                   backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-                  child: Icon(
-                    Icons.person_outline,
-                    color: Theme.of(context).primaryColor,
-                  ),
+                  child: Icon(Icons.person_outline, color: Theme.of(context).primaryColor),
                 ),
                 title: const Text('My Profile'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigate to profile page
+                  // Navigate to Profile Page (Logic needs to be implemented)
                 },
               ),
+              // Order History Option
               ListTile(
                 leading: CircleAvatar(
                   backgroundColor: Colors.orange.withOpacity(0.1),
-                  child: const Icon(
-                    Icons.history,
-                    color: Colors.orange,
-                  ),
+                  child: const Icon(Icons.history, color: Colors.orange),
                 ),
                 title: const Text('Order History'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigate to order history
+                  // Navigate to Order History Page (Logic needs to be implemented)
                 },
               ),
+              // Settings Option
               ListTile(
                 leading: CircleAvatar(
                   backgroundColor: Colors.green.withOpacity(0.1),
-                  child: const Icon(
-                    Icons.settings_outlined,
-                    color: Colors.green,
-                  ),
+                  child: const Icon(Icons.settings_outlined, color: Colors.green),
                 ),
                 title: const Text('Settings'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigate to settings
+                  // Navigate to Settings Page (Logic needs to be implemented)
                 },
               ),
+              // Logout Option
               ListTile(
                 leading: CircleAvatar(
                   backgroundColor: Colors.red.withOpacity(0.1),
-                  child: const Icon(
-                    Icons.logout,
-                    color: Colors.red,
-                  ),
+                  child: const Icon(Icons.logout, color: Colors.red),
                 ),
                 title: const Text('Logout'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {
-                  Navigator.pop(context);
-                  // Logout user
+                onTap: () async {
+                  Navigator.pop(context); // Close the bottom sheet
+
+                  // Call the logout method from AuthService
+                  await AuthService.logout(context);
                 },
               ),
             ],

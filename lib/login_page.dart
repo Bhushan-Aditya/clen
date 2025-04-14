@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  /// Login Functionality
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -30,7 +31,6 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       try {
-        // Remove the rememberMe parameter that was causing the error
         final response = await AuthService.signIn(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
@@ -44,12 +44,7 @@ class _LoginPageState extends State<LoginPage> {
         });
 
         if (response.user != null) {
-          // Store the remember me preference locally if needed
-          if (_rememberMe) {
-            // You could implement this using shared preferences or other local storage
-            // Example: await PreferencesService.setRememberMe(_emailController.text);
-          }
-
+          // Navigate to the Home Page on successful login
           Navigator.pushReplacementNamed(context, '/home');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -60,7 +55,6 @@ class _LoginPageState extends State<LoginPage> {
           );
         }
       } catch (e) {
-        // Check if widget is still mounted before proceeding
         if (!mounted) return;
 
         setState(() {
@@ -77,8 +71,8 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  /// Forgot Password Functionality
   void _forgotPassword() {
-    // Show a dialog to enter email for password reset
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -105,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           ElevatedButton(
             onPressed: () {
-              // Implement password reset functionality
+              // TODO: Implement password reset functionality
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -136,9 +130,15 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text('Welcome Back', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                const Text(
+                  'Welcome Back',
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 8),
-                const Text('Login to access your account and services', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                const Text(
+                  'Login to access your account and services',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _emailController,
@@ -154,7 +154,8 @@ class _LoginPageState extends State<LoginPage> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
-                    } else if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value)) {
+                    } else if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+                        .hasMatch(value)) {
                       return 'Please enter a valid email';
                     }
                     return null;
@@ -250,7 +251,10 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Don\'t have an account?', style: TextStyle(color: Colors.grey)),
+                    const Text(
+                      'Don\'t have an account?',
+                      style: TextStyle(color: Colors.grey),
+                    ),
                     TextButton(
                       onPressed: _isLoading
                           ? null
